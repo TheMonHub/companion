@@ -38,6 +38,8 @@ end
 
 local nativefs = require("extern.nativefs")
 local gameWindow = require("window.main")
+local sceneryInit = require("extern.scenery")
+local scenery = sceneryInit("start", "scenes")
 
 -- MODULE INIT END
 
@@ -47,14 +49,15 @@ function love.load()
     gameLog.info("Initialized!")
     gameLog.info("Game Root: " .. love.filesystem.getRealDirectory(gameSourceDirMntPoint))
     gameLog.info("Game Resources: " .. love.filesystem.getRealDirectory(gameSourceDirMntPoint) .. gameResourceDir)
-    love.window.setPosition(gameWindow.positionX, gameWindow.positionY)
+    scenery:load()
 end
 
 function love.update(dt)
-
+    scenery:update(dt)
     love.window.setPosition(gameWindow.positionX, gameWindow.positionY)
 end
 
 function love.draw()
     love.graphics.translate(windowCenterX, windowCenterY)
+    scenery:draw()
 end
