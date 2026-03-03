@@ -7,5 +7,6 @@ function love.conf(t)
     t.window.height = 600
     t.modules.physics = false
     t.modules.touch = false
-    t.modules.data = true
+    t.modules.data = false
+    t.modules.vsync = 0
 end

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-love src/ --fused
+./love/love src/ --fused
