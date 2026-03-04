@@ -1,29 +1,16 @@
 local game = {}
 
-local shakeTranIntense = 100 * love.window.getDPIScale()
 local render = require("render.main")
 
-local function ease(target, value, speed, dt)
-    return value + (target - value) * (1 - math.exp(-speed * dt))
-end
-
 function game:load(args)
-    render.winX = screenSizeX / 2 - windowCenterX
-    render.winY = screenSizeY / 2 - windowCenterY
-    local winSuccess = love.window.updateMode(windowWidth, windowHeight, {borderless=false})
-    if winSuccess == false then
-        gameLog.error("Failed to open the window!")
-        love.event.quit(4)
-        return
-    end
 end
 
 function game:draw()
+    love.graphics.setColor(0,0,0,1)
+    love.graphics.rectangle("fill", -400, -300, 800, 600)
 end
 
 function game:update(dt)
-    shakeTranIntense = ease(0, shakeTranIntense, 15, dt)
-    render.shakeWin(shakeTranIntense, shakeTranIntense)
 end
 
 return game

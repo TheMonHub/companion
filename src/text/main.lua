@@ -1,7 +1,7 @@
 local module = {}
 
 local defaultFont do
-    defaultFont = love.graphics.newFont("fonts/edit-undo.brk.ttf", 20, "mono")
+    defaultFont = love.graphics.newFont("fonts/jetbrains-mono.medium-medium.ttf", 30)
     module.defaultFont = defaultFont
 
     module.defaultFont:setFilter("nearest")

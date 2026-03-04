@@ -47,34 +47,21 @@ local render = require("render.main")
 -- MODULE INIT END
 
 function love.load()
-    translateX, translateY = 0, 0
-    playAreaScale = math.min(
-            screenSizeX  / windowWidth,
-            screenSizeY / windowHeight
-    )
-    playAreaX, playAreaY = windowWidth * playAreaScale, windowHeight * playAreaScale
-    playAreaHalfX, playAreaHalfY = playAreaX / 2, playAreaY / 2
-
     gameLog.info("Initialized!")
     gameLog.info("Game Root: " .. love.filesystem.getRealDirectory(gameSourceDirMntPoint))
     gameLog.info("Game Resources: " .. love.filesystem.getRealDirectory(gameSourceDirMntPoint) .. gameResourceDir)
-
-    love.graphics.setBackgroundColor(1,1,1)
 
     render.update()
     scenery:load()
 end
 
 function love.update(dt)
-    render.updateWin()
-    render.update(dt)
+    render.update()
     scenery:update(dt)
 end
 
 function love.draw()
-    love.graphics.translate(windowCenterX + translateX, windowCenterY + translateY)
-    love.graphics.setColor(0,0,0)
-    love.graphics.rectangle("fill", 0 - playAreaHalfX, 0 - playAreaHalfY, playAreaX, playAreaY)
-    love.graphics.setColor(1,1,1)
+    love.graphics.setBackgroundColor(1,0,1,1)
+    love.graphics.translate(windowCenterX, windowCenterY)
     scenery:draw()
 end
