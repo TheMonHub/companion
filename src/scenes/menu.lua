@@ -1,8 +1,10 @@
 local game = {}
 
 local render = require("render.main")
+local text
 
 function game:load(args)
+    text = require("text.main")
 end
 
 function game:draw()
