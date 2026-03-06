@@ -2,7 +2,6 @@ local game = {}
 
 local text
 local render = require("render.main")
-local ease = require("render.ease")
 
 function game:load(args)
     local winSuccess = love.window.setMode( windowWidth, windowHeight, {borderless=false, resizable=false, x=screenSizeX / 2 - windowCenterX, y=screenSizeY / 2 - windowCenterY} )
@@ -14,12 +13,8 @@ function game:load(args)
     require("render.setup")
     render.winX = screenSizeX / 2 - windowCenterX
     render.winY = screenSizeY / 2 - windowCenterY
-    if require("debug.skip_intro") == true then
-        self.setScene("menu")
-        return
-    else
-        self.setScene("intro")
-    end
+    love.window.setIcon(love.image.newImageData(gameResourceDir .. "icon.png"))
+    self.setScene("menu-1")
 end
 
 function game:draw()

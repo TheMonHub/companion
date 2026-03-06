@@ -2,17 +2,19 @@ local game = {}
 
 local render = require("render.main")
 local text
+local ease = require("render.ease")
+local start = 0
 
 function game:load(args)
     text = require("text.main")
 end
 
 function game:draw()
-
+    love.graphics.setColor(1,1,1,1)
+    love.graphics.rectangle("fill", -400, -300, 800, 600)
 end
 
 function game:update(dt)
-
 end
 
 return game
