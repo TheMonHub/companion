@@ -41,15 +41,29 @@ end
 -- INIT END
 
 local sceneryInit = require("extern.scenery")
-local scenery = sceneryInit("start", "scenes")
+local scenery = sceneryInit("main-game", "scenes")
 local render = require("render.main")
 
 -- MODULE INIT END
 
+local mainRender
 function love.load()
     gameLog.info("Initialized!")
     gameLog.info("Game Root: " .. love.filesystem.getRealDirectory(gameSourceDirMntPoint))
     gameLog.info("Game Resources: " .. love.filesystem.getRealDirectory(gameResourceDir) .. "\\res")
+    love.graphics.setBackgroundColor(0,0,0,1)
+    local winSuccess = love.window.setMode( windowWidth, windowHeight, {borderless=false, resizable=false, x=screenSizeX / 2 - windowCenterX, y=screenSizeY / 2 - windowCenterY} )
+    if winSuccess == false then
+        gameLog.error("Failed to open the window!")
+        love.event.quit(4)
+        return
+    end
+    mainRender = love.graphics.newCanvas(800, 600)
+    require("render.setup")
+    render.winX = screenSizeX / 2 - windowCenterX
+    render.winY = screenSizeY / 2 - windowCenterY
+    love.window.setIcon(love.image.newImageData(gameResourceDir .. "icon.png"))
+    love.window.setTitle("COMPANION")
 
     render.update()
     scenery:load()
@@ -61,7 +75,16 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.setBackgroundColor(0,0,0,1)
     love.graphics.translate(windowCenterX, windowCenterY)
+
+    love.graphics.setCanvas(mainRender)
+    love.graphics.clear(0,0,0,1)
     scenery:draw()
+    love.graphics.setCanvas()
+
+    love.graphics.origin()
+    love.graphics.scale(1 / love.graphics.getDPIScale(), 1 / love.graphics.getDPIScale())
+    love.graphics.setBlendMode("alpha", "premultiplied")
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(mainRender, 0,0)
 end

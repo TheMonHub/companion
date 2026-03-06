@@ -11,7 +11,7 @@ print("Log will be saved to: " .. love.filesystem.getSaveDirectory() .. "\\" .. 
 
 function module.info(content)
     local contentF = "[INFO] " .. content .. "\r\n"
-    print(contentF)
+    print("[INFO] " .. content)
     local s, e = logFile:write(contentF)
     if s == false then
         print("Failed to log:".. e)
@@ -20,7 +20,7 @@ end
 
 function module.warn(content)
     local contentF = "[!WARN] " .. content .. "\r\n"
-    print(contentF)
+    print("[!WARN] " .. content)
     local s, e = logFile:write(contentF)
     if s == false then
         print("Failed to log:".. e)
@@ -29,7 +29,7 @@ end
 
 function module.error(content)
     local contentF = "[!!ERROR] " .. content .. "\r\n"
-    print(contentF)
+    print("[!!ERROR] " .. content)
     local s, e = logFile:write(contentF)
     if s == false then
         print("Failed to log:".. e)

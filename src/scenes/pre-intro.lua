@@ -18,7 +18,7 @@ function game:update(dt)
             wait = wait + dt
             return
         end
-        self.setScene("menu-2")
+        self.setScene("intro")
         return
     end
     start = ease.circleEaseOut(1, start, 3, dt)

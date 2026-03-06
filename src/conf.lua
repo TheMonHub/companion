@@ -1,5 +1,5 @@
 function love.conf(t)
-    t.identity = "outsidebythemonhub"
+    t.identity = "companionbythemonhub"
     t.appendidentity = true
     t.gammacorrect = false
     t.window = nil
