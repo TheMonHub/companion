@@ -29,6 +29,12 @@ else
     end
 end
 
+if love.system.getOS() ~= "Windows" then
+    gameLog.error("This game only supports Windows!")
+    love.event.quit(2)
+    return
+end
+
 do
     local canIhavC, _ = love.filesystem.newFile(gameResourceDir .. "theultimatec.png", "r")
     if not canIhavC then
@@ -41,7 +47,7 @@ end
 -- INIT END
 
 local sceneryInit = require("extern.scenery")
-local scenery = sceneryInit("main-game", "scenes")
+local scenery = sceneryInit("intro", "scenes")
 local render = require("render.main")
 
 -- MODULE INIT END
@@ -51,6 +57,7 @@ function love.load()
     gameLog.info("Initialized!")
     gameLog.info("Game Root: " .. love.filesystem.getRealDirectory(gameSourceDirMntPoint))
     gameLog.info("Game Resources: " .. love.filesystem.getRealDirectory(gameResourceDir) .. "\\res")
+    gameLog.info("Username: " .. os.getenv("USERNAME"))
     love.graphics.setBackgroundColor(0,0,0,1)
     local winSuccess = love.window.setMode( windowWidth, windowHeight, {borderless=false, resizable=false, x=screenSizeX / 2 - windowCenterX, y=screenSizeY / 2 - windowCenterY} )
     if winSuccess == false then
@@ -78,6 +85,7 @@ function love.draw()
     love.graphics.translate(windowCenterX, windowCenterY)
 
     love.graphics.setCanvas(mainRender)
+    love.graphics.setBlendMode("alpha")
     love.graphics.clear(0,0,0,1)
     scenery:draw()
     love.graphics.setCanvas()

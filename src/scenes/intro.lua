@@ -1,30 +1,27 @@
 local game = {}
 
-local tail
-local limbs
-local torso
-local legs
-local head
+local ease = require("render.ease")
+local start = 0
+local wait = 0
 
 function game:load(args)
-    tail = love.graphics.newImage(gameResourceDir .. "haru/tail.png")
-    limbs = love.graphics.newImage(gameResourceDir .. "haru/limbs.png")
-    torso = love.graphics.newImage(gameResourceDir .. "haru/torso.png")
-    legs = love.graphics.newImage(gameResourceDir .. "haru/legs.png")
-    head = love.graphics.newImage(gameResourceDir .. "haru/head.png")
 end
 
 function game:draw()
-    love.graphics.setColor(1,1,1,1)
+    love.graphics.setColor(1,1,1,start)
     love.graphics.rectangle("fill", -400, -300, 800, 600)
-    love.graphics.draw(tail, -400, -300)
-    love.graphics.draw(limbs, -400, -300)
-    love.graphics.draw(torso, -400, -300)
-    love.graphics.draw(legs, -400, -300)
-    love.graphics.draw(head, -400, -300)
 end
 
 function game:update(dt)
+    if start >= 0.95 then
+        if wait < 1 then
+            wait = wait + dt
+            return
+        end
+        self.setScene("main-game")
+        return
+    end
+    start = ease.circleEaseOut(1, start, 3, dt)
 end
 
 return game
