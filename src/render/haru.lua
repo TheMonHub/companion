@@ -115,7 +115,7 @@ function module.draw()
 end
 
 function module.update(dt)
-    local newMouseX, newMouseY = 0, 0
+    local newMouseX, newMouseY = 400, 300
     if look == false then
         newMouseX, newMouseY = love.mouse.getPosition()
     end

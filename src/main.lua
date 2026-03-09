@@ -5,6 +5,8 @@ windowWidth, windowHeight = 800, 600
 windowCenterX, windowCenterY = windowWidth / 2, windowHeight / 2
 screenSizeX, screenSizeY = love.window.getDesktopDimensions()
 
+Username = os.getenv("USERNAME")
+
 local gameLog = require("log.main")
 if gameLog == nil then
     return
@@ -57,7 +59,7 @@ function love.load()
     gameLog.info("Initialized!")
     gameLog.info("Game Root: " .. love.filesystem.getRealDirectory(gameSourceDirMntPoint))
     gameLog.info("Game Resources: " .. love.filesystem.getRealDirectory(gameResourceDir) .. "\\res")
-    gameLog.info("Username: " .. os.getenv("USERNAME"))
+    gameLog.info("Username: " .. Username)
     love.graphics.setBackgroundColor(0,0,0,1)
     local winSuccess = love.window.setMode( windowWidth, windowHeight, {borderless=false, resizable=false, x=screenSizeX / 2 - windowCenterX, y=screenSizeY / 2 - windowCenterY} )
     if winSuccess == false then
