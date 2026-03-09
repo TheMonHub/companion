@@ -16,6 +16,8 @@ local faceMouthClose
 local faceMouthOpen
 local faceBlink
 
+local shadow
+
 local isBlink = false
 local blinkTime = 0
 local blinkPause = 0
@@ -89,11 +91,13 @@ function module.load(args)
     faceMouthClose = love.graphics.newImage(gameResourceDir .. "haru/face-mouth-close.png")
     faceMouthOpen = love.graphics.newImage(gameResourceDir .. "haru/face-mouth-open.png")
     faceBlink = love.graphics.newImage(gameResourceDir .. "haru/face-3.png")
+    shadow = love.graphics.newImage(gameResourceDir .. "haru/shadow.png")
     init = true
 end
 
 function module.draw()
     local y = amplitude * math.sin(frequency * time)
+    love.graphics.draw(shadow, -400, -300)
     love.graphics.draw(tail, (-y * 15 - 400 + mouseX * 0.005) + mouseY * 0.05, y * 25 - 300 - mouseY * 0.05, -y * 0.05 + mouseY * 0.0001)
     love.graphics.draw(limbs, -400, y * 1.5 - 300)
     love.graphics.draw(torso, -400 - mouseX * 0.0025, y - 300 - mouseY * 0.0025)
