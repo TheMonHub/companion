@@ -16,6 +16,9 @@ local faceMouthClose
 local faceMouthOpen
 local faceBlink
 
+local mouthSadOpen
+local mouthSadClose
+
 local shadow
 
 local isBlink = false
@@ -92,6 +95,8 @@ function module.load(args)
     faceMouthOpen = love.graphics.newImage(gameResourceDir .. "haru/face-mouth-open.png")
     faceBlink = love.graphics.newImage(gameResourceDir .. "haru/face-3.png")
     shadow = love.graphics.newImage(gameResourceDir .. "haru/shadow.png")
+    mouthSadClose = love.graphics.newImage(gameResourceDir .. "haru/face-mouth-sad.png")
+    mouthSadOpen = love.graphics.newImage(gameResourceDir .. "haru/face-mouth-sad-open.png")
     init = true
 end
 
@@ -109,6 +114,10 @@ function module.draw()
         love.graphics.draw(faceMouthOpen, -400 + mouseX * 0.005, y * 1.5 - 295 + mouseY * 0.005)
     elseif mouthStage == "neutral" then
         love.graphics.draw(faceMouthClose, -400 + mouseX * 0.005, y * 1.5 - 295 + mouseY * 0.005)
+    elseif mouthStage == "sad" then
+        love.graphics.draw(mouthSadClose, -400 + mouseX * 0.005, y * 1.5 - 295 + mouseY * 0.005)
+    elseif mouthStage == "sad-open" then
+        love.graphics.draw(mouthSadOpen, -400 + mouseX * 0.005, y * 1.5 - 295 + mouseY * 0.005)
     end
     if faceStage == "neutral" then
         love.graphics.draw(faceFollow, -400 + mouseX * 0.0125, y - 295 + mouseY * 0.0125)

@@ -98,3 +98,16 @@ function love.draw()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(mainRender, 0,0)
 end
+
+canQuit = false
+cleanupHandler = function()
+
+end
+quitHandler = function()
+    return canQuit
+end
+
+function love.quit()
+    cleanupHandler()
+    return quitHandler()
+end
