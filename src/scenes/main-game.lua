@@ -7,11 +7,11 @@ local background = require("render.background")
 local fadein = 1
 
 local moodRn = 4
-local moodValue = 300
+local moodValue = 500
 
 local init = false
 
-local notSoEasterNowAreYou = false
+notSoEasterNowAreYou = true
 
 isItTheTimeYet = 900
 
@@ -56,7 +56,9 @@ function game:update(dt)
         else
             fadein = ease.circleEaseOut(0, fadein, 3, dt)
         end
-        if fadein <= 0.5 then
+        if fadein <= 0.5 and notSoEasterNowAreYou == false then
+            love.window.setIcon(iconMain)
+            love.window.setTitle("COMPANION")
             notSoEasterNowAreYou = true
         end
     end
@@ -64,8 +66,7 @@ function game:update(dt)
     background.update(dt)
     moodValue = math.max(math.min(moodValue - dt, 500), 0)
     moodRn = math.ceil(moodValue / 100) + 1
-    isItTheTimeYet = math.max(isItTheTimeYet - (dt * (moodRn - 1)), 0)
-    print(isItTheTimeYet)
+    isItTheTimeYet = math.max(isItTheTimeYet - (dt * (moodRn - 2)), 0)
 
     if moodRn < 5 then
         haru.setMouthStage("sad")

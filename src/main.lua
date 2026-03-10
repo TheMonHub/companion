@@ -54,6 +54,9 @@ local render = require("render.main")
 
 -- MODULE INIT END
 
+iconMain = nil
+iconBlack = nil
+
 local mainRender
 function love.load()
     gameLog.info("Initialized!")
@@ -71,7 +74,9 @@ function love.load()
     require("render.setup")
     render.winX = screenSizeX / 2 - windowCenterX
     render.winY = screenSizeY / 2 - windowCenterY
-    love.window.setIcon(love.image.newImageData(gameResourceDir .. "icon.png"))
+    iconMain = love.image.newImageData(gameResourceDir .. "icon.png")
+    iconBlack = love.image.newImageData(gameResourceDir .. "icon-black.png")
+    love.window.setIcon(iconMain)
     love.window.setTitle("COMPANION")
 
     render.update()
