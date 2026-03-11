@@ -1,4 +1,5 @@
 I'm sorry for the texture mess and stuff using 800x600 instead of making it optimal and stuff.
+I shoulda use atlas or sprite sheet
 
 I'm just ehhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh-
 TOO LAZY.
