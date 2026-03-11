@@ -6,6 +6,8 @@ local bgImage
 local floorImage
 local quad
 
+renderFloor = true
+
 local frame = 0
 
 function module.load(args)
@@ -25,7 +27,9 @@ end
 function module.draw()
     quad:setViewport(frame, frame, bgImage:getWidth(), bgImage:getHeight())
     love.graphics.draw(bgImage, quad, -400, -300, 0, 800/500, 600/500)
-    love.graphics.draw(floorImage, -400, -300)
+    if renderFloor == true then
+        love.graphics.draw(floorImage, -400, -300)
+    end
 end
 
 function module.update(dt)

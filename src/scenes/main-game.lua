@@ -13,11 +13,23 @@ local init = false
 
 notSoEasterNowAreYou = true
 
+local fadeOut = 1
+local changeTo
+
 isItTheTimeYet = 900
 
 local mood = {}
 
+local function transition(scene)
+    changeTo = scene
+end
+
 function game:load(args)
+    haru.setBodyStage("neutral")
+    haru.lookUp(false)
+    fadeOut = 1
+    changeTo = nil
+
     if init == true then
         return
     end
@@ -39,6 +51,7 @@ function game:draw()
     background.draw()
     haru.draw()
 
+    love.graphics.setColor(1,1,1,fadeOut)
     if notSoEasterNowAreYou == false then
         love.graphics.draw(mood[1], -400, -300)
     else
@@ -50,9 +63,17 @@ function game:draw()
 end
 
 function game:update(dt)
+    if changeTo ~= nil then
+        if fadeOut <= 0.05 then
+            fadeOut = 0
+            self.setScene(changeTo)
+        end
+        fadeOut = ease.circleEaseOut(0, fadeOut, 15, dt)
+    end
     if fadein ~= 0 then
         if fadein <= 0.05 then
             fadein = 0
+            transition("transition-lemon")
         else
             fadein = ease.circleEaseOut(0, fadein, 3, dt)
         end

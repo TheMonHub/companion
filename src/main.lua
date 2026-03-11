@@ -70,14 +70,14 @@ function love.load()
         love.event.quit(4)
         return
     end
-    mainRender = love.graphics.newCanvas(800, 600)
-    require("render.setup")
-    render.winX = screenSizeX / 2 - windowCenterX
-    render.winY = screenSizeY / 2 - windowCenterY
     iconMain = love.image.newImageData(gameResourceDir .. "icon.png")
     iconBlack = love.image.newImageData(gameResourceDir .. "icon-black.png")
     love.window.setIcon(iconMain)
     love.window.setTitle("COMPANION")
+    mainRender = love.graphics.newCanvas(800, 600)
+    require("render.setup")
+    render.winX = screenSizeX / 2 - windowCenterX
+    render.winY = screenSizeY / 2 - windowCenterY
 
     render.update()
     scenery:load()

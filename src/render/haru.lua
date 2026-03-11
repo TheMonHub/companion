@@ -19,6 +19,8 @@ local faceBlink
 local mouthSadOpen
 local mouthSadClose
 
+local lemon = {}
+
 local shadow
 
 local isBlink = false
@@ -39,6 +41,9 @@ local frequency = 1.5
 local mouseX, mouseY = 400, 300
 
 local look = false
+local up = false
+
+haruOffsetX = 0
 
 function module.getFaceStage()
     return faceStage
@@ -72,6 +77,10 @@ function module.isLookAtYOU()
     return look
 end
 
+function module.lookUp(realorfakeorcakeidfk)
+    up = realorfakeorcakeidfk
+end
+
 function module.blink()
     isBlink = true
     beforeBlinkStage = faceStage
@@ -97,10 +106,22 @@ function module.load(args)
     shadow = love.graphics.newImage(gameResourceDir .. "haru/shadow.png")
     mouthSadClose = love.graphics.newImage(gameResourceDir .. "haru/face-mouth-sad.png")
     mouthSadOpen = love.graphics.newImage(gameResourceDir .. "haru/face-mouth-sad-open.png")
+
+    lemon[1] = love.graphics.newImage(gameResourceDir .. "haru/lemon-1.png")
+    lemon[2] = love.graphics.newImage(gameResourceDir .. "haru/lemon-2.png")
     init = true
 end
 
 function module.draw()
+    if bodyStage == "lemon-1" then
+        love.graphics.draw(lemon[1], -400 + haruOffsetX, -300)
+        return
+    end
+    if bodyStage == "lemon-2" then
+        love.graphics.draw(lemon[2], -400 + haruOffsetX, -300)
+        return
+    end
+
     local y = amplitude * math.sin(frequency * time)
     love.graphics.draw(shadow, -400, -300)
     love.graphics.draw(tail, (-y * 15 - 400 + mouseX * 0.005) + mouseY * 0.05, y * 25 - 300 - mouseY * 0.05, -y * 0.05 + mouseY * 0.0001)
@@ -108,7 +129,6 @@ function module.draw()
     love.graphics.draw(torso, -400 - mouseX * 0.0025, y - 300 - mouseY * 0.0025)
     love.graphics.draw(legs, -400 , -300)
     love.graphics.draw(head, -400 - mouseX * 0.001, y - 300 - mouseY * 0.001)
-
 
     if mouthStage == "open" then
         love.graphics.draw(faceMouthOpen, -400 + mouseX * 0.005, y * 1.5 - 295 + mouseY * 0.005)
@@ -131,6 +151,9 @@ function module.update(dt)
     local newMouseX, newMouseY = 400, 300
     if look == false then
         newMouseX, newMouseY = love.mouse.getPosition()
+    end
+    if up == true then
+        newMouseX, newMouseY = 400, -300
     end
     if isBlink == true then
         blinkPause = blinkPause + dt

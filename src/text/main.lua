@@ -1,7 +1,7 @@
 local module = {}
 
 local defaultFont do
-    defaultFont = love.graphics.newFont("fonts/determination.ttf", 12)
+    defaultFont = love.graphics.newFont(gameResourceDir .. "fonts/determination.ttf", 12)
     module.defaultFont = defaultFont
 
     module.defaultFont:setFilter("nearest")
