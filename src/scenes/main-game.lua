@@ -11,8 +11,6 @@ local moodValue = 300
 
 local init = false
 
-notSoEasterNowAreYou = true
-
 local fadeOut = 1
 local changeTo
 
@@ -27,6 +25,7 @@ end
 function game:load(args)
     haru.setBodyStage("neutral")
     haru.lookUp(false)
+    renderFloor = true
     fadeOut = 1
     changeTo = nil
 
@@ -47,16 +46,11 @@ end
 
 function game:draw()
     love.graphics.setColor(1,1,1,1)
-    love.graphics.rectangle("fill", -400, -300, 800, 600)
     background.draw()
     haru.draw()
 
     love.graphics.setColor(1,1,1,fadeOut)
-    if notSoEasterNowAreYou == false then
-        love.graphics.draw(mood[1], -400, -300)
-    else
-        love.graphics.draw(mood[moodRn], -400, -300)
-    end
+    love.graphics.draw(mood[moodRn], -400, -300)
 
     love.graphics.setColor(1,1,1,fadein)
     love.graphics.rectangle("fill", -400, -300, 800, 600)
@@ -73,14 +67,9 @@ function game:update(dt)
     if fadein ~= 0 then
         if fadein <= 0.05 then
             fadein = 0
-            transition("transition-lemon")
+            -- transition("transition-lemon")
         else
             fadein = ease.circleEaseOut(0, fadein, 3, dt)
-        end
-        if fadein <= 0.5 and notSoEasterNowAreYou == false then
-            love.window.setIcon(iconMain)
-            love.window.setTitle("COMPANION")
-            notSoEasterNowAreYou = true
         end
     end
     haru.update(dt)

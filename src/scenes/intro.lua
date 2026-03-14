@@ -29,14 +29,6 @@ function game:update(dt)
             wait = wait + dt
             return
         end
-        local yourChance = love.math.random(1, 10)
-        gameLog.info("This Is Your Luck: " .. tostring(yourChance))
-        if yourChance == 10 then
-            gameLog.info("Showing The Super Duper Secret Thingy")
-            love.window.setIcon(iconBlack)
-            love.window.setTitle(glitch[love.math.random(1, #glitch)])
-            notSoEasterNowAreYou = false
-        end
         self.setScene("main-game")
         return
     end

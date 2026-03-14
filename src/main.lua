@@ -63,7 +63,7 @@ function love.load()
     gameLog.info("Game Root: " .. love.filesystem.getRealDirectory(gameSourceDirMntPoint))
     gameLog.info("Game Resources: " .. love.filesystem.getRealDirectory(gameResourceDir) .. "\\res")
     gameLog.info("Username: " .. Username)
-    love.graphics.setBackgroundColor(0,0,0,1)
+    love.graphics.setBackgroundColor(1,1,1,1)
     local winSuccess = love.window.setMode( windowWidth, windowHeight, {borderless=false, resizable=false, x=screenSizeX / 2 - windowCenterX, y=screenSizeY / 2 - windowCenterY} )
     if winSuccess == false then
         gameLog.error("Failed to open the window!")
@@ -93,7 +93,7 @@ function love.draw()
 
     love.graphics.setCanvas(mainRender)
     love.graphics.setBlendMode("alpha")
-    love.graphics.clear(0,0,0,1)
+    love.graphics.clear(0,0,0,0)
     scenery:draw()
     love.graphics.setCanvas()
 
