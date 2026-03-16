@@ -107,6 +107,10 @@ end
 function game:draw()
     background.draw()
 
+    for i, v in ipairs(explodeT) do
+        love.graphics.draw(explode, v["x"] - 157, 300 - 157, 0, 0.75, 0.75)
+    end
+
     for i, v in ipairs(fall["when"]) do
         local type = fall["type"][i]
         local locationX, locationY = fall["where"][i], -fall["when"][i] * 600
@@ -115,10 +119,6 @@ function game:draw()
         else
             love.graphics.draw(lemon, locationX - lemonW / 2, locationY + 300 - lemonH / 2)
         end
-    end
-
-    for i, v in ipairs(explodeT) do
-        love.graphics.draw(explode, v["x"] - 157, 300 - 157, 0, 0.75, 0.75)
     end
 
     love.graphics.draw(bucket, pX - bucketW / 2, 275 + pYO - bucketW /2 - rot * 50 + math.abs(rot * 50), rot)
