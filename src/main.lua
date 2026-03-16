@@ -49,7 +49,7 @@ end
 -- INIT END
 
 local sceneryInit = require("extern.scenery")
-local scenery = sceneryInit("intro", "scenes")
+local scenery = sceneryInit("lemon", "scenes")
 local render = require("render.main")
 
 -- MODULE INIT END

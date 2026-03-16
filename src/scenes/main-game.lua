@@ -29,6 +29,9 @@ function game:load(args)
     fadeOut = 1
     changeTo = nil
 
+    love.keypressed = function(key, scancode, isrepeat) end
+    love.keyreleased = function(key, scancode) end
+
     if init == true then
         return
     end
@@ -67,7 +70,6 @@ function game:update(dt)
     if fadein ~= 0 then
         if fadein <= 0.05 then
             fadein = 0
-            -- transition("transition-lemon")
         else
             fadein = ease.circleEaseOut(0, fadein, 3, dt)
         end
@@ -76,7 +78,7 @@ function game:update(dt)
     background.update(dt)
     moodValue = math.max(math.min(moodValue - dt, 500), 0)
     moodRn = math.ceil(moodValue / 100) + 1
-    isItTheTimeYet = math.max(isItTheTimeYet - (dt * (moodRn - 2)), 0)
+    isItTheTimeYet = math.max(isItTheTimeYet - (dt * (moodRn - 2)) * 0.5, 0)
 
     if moodRn < 5 then
         haru.setMouthStage("sad")
