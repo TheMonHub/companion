@@ -85,7 +85,7 @@ function game:load(args)
     init = true
 
     love.keypressed = function(key, scancode, isrepeat)
-        if waiiitttt <= 0 then
+        if waiiitttt <= 0 and #key == 1 then
             confirm = true
             dead = false
         end
@@ -181,6 +181,7 @@ local function maybeCollectIt()
             local dif = math.abs(where - pX)
             if dif < bucketW * 1.1 and fall["type"][i] == 1 then
                 score = score + 1
+                isItTheTimeYet = math.max(isItTheTimeYet - 10, 0)
                 lastPickUp = 0
 
                 table.remove(fall["type"], i)
