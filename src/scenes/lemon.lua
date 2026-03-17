@@ -188,9 +188,11 @@ local function maybeCollectIt()
         if when <= 0.1 then
             local where = fall["where"][i]
             local dif = math.abs(where - pX)
-            if dif < bucketW * 0.9 and fall["type"][i] == 1 and when >= 0.025 then
+            if dif < bucketW * 0.8 and fall["type"][i] == 1 and when >= 0.025 then
                 score = score + 1
-                scoreS:play()
+                local S = scoreS:clone()
+                S:play()
+                S:release()
                 if score > highScore then
                     highScore = score
                 end
