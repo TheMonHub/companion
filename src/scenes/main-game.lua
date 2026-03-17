@@ -7,7 +7,7 @@ local background = require("render.background")
 local fadein = 1
 
 local moodRn = 4
-local moodValue = 300
+moodValue = 300
 
 local init = false
 

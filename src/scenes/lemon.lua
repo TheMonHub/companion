@@ -2,6 +2,7 @@ local game = {}
 
 local ease = require("render.ease")
 local background = require("render.background")
+local back = require("render.back")
 local text
 local fadein = 1
 
@@ -75,6 +76,7 @@ function game:load(args)
         return
     end
     background.load()
+    back.load()
 
     bucket = love.graphics.newImage(gameResourceDir .. "lemon/bucket.png")
     bucketW, bucketH = bucket:getDimensions()
@@ -130,9 +132,6 @@ function game:draw()
 
     love.graphics.draw(bucket, pX - bucketW / 2, 275 + pYO - bucketW /2 - rot * 50 + math.abs(rot * 50), rot)
 
-    love.graphics.setColor(1,1,1,fadein)
-    love.graphics.rectangle("fill", -400, -300, 800, 600)
-
     love.graphics.setColor(1,1,1,1)
     if dead == true then
         love.graphics.draw(explode, pX - 210, 275 + pYO - 210)
@@ -149,6 +148,11 @@ function game:draw()
 
     text.printb(tostring(score), -330, -250, 3, 2)
     text.printb("HIGH: " .. tostring(highScore), -325, -210, 2, 2)
+
+    back.draw()
+
+    love.graphics.setColor(1,1,1,fadein)
+    love.graphics.rectangle("fill", -400, -300, 800, 600)
 end
 
 local function youDied()
@@ -190,6 +194,7 @@ local function maybeCollectIt()
             local dif = math.abs(where - pX)
             if dif < bucketW * 0.8 and fall["type"][i] == 1 and when >= 0.025 then
                 score = score + 1
+                moodValue = math.min(moodValue + 2, 500)
                 local S = scoreS:clone()
                 S:play()
                 S:release()
@@ -220,7 +225,7 @@ local function maybeCollectIt()
             S:play()
             explodeT[explodeCount] = {
                 ["x"] = fall["where"][i],
-                ["time"] = 0.2,
+                ["time"] = 0.15,
                 ["s"] = S
             }
             table.remove(fall["type"], i)
@@ -258,6 +263,10 @@ end
 local oldPx
 function game:update(dt)
     background.update(dt)
+    back.update(dt)
+    if back.doChange() == true then
+        self.setScene("main-game")
+    end
     if waiiitttt >= 0 then
         waiiitttt = waiiitttt - dt
     end
