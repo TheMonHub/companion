@@ -88,7 +88,7 @@ function game:load(args)
     scoreS = love.audio.newSource(gameResourceDir .. "score.mp3", "static")
     explodeS = love.audio.newSource(gameResourceDir .. "explode.mp3", "static")
     scoreS:setVolume(0.5)
-    explodeS:setVolume(0.5)
+    explodeS:setVolume(0.75)
     text = require("text.main")
 
     init = true
@@ -201,7 +201,7 @@ local function maybeCollectIt()
                 if score > highScore then
                     highScore = score
                 end
-                isItTheTimeYet = math.max(isItTheTimeYet - 10, 0)
+                isItTheTimeYet = math.max(isItTheTimeYet - 1, 0)
                 lastPickUp = 0
 
                 table.remove(fall["type"], i)
