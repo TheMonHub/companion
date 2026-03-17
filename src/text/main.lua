@@ -18,4 +18,19 @@ function module.print(content, positionX, positionY, scale) -- How tf did I mess
     )
 end
 
+function module.printb(content, positionX, positionY, scale, borderScale)
+    love.graphics.setColor(0,0,0,1)
+    module.print(content, positionX - borderScale, positionY - borderScale, scale)
+    module.print(content, positionX + borderScale, positionY + borderScale, scale)
+    module.print(content, positionX + borderScale, positionY - borderScale, scale)
+    module.print(content, positionX - borderScale, positionY + borderScale, scale)
+    module.print(content, positionX, positionY + borderScale, scale)
+    module.print(content, positionX, positionY - borderScale, scale)
+    module.print(content, positionX + borderScale, positionY, scale)
+    module.print(content, positionX - borderScale, positionY, scale)
+
+    love.graphics.setColor(1,1,1,1)
+    module.print(content, positionX, positionY, scale)
+end
+
 return module

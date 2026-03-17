@@ -19,6 +19,9 @@ local upForReset = false
 local accumulatedTime = 0
 local whenSpawn = 1
 local waiiitttt = 0
+local highScore = 0
+local scoreS
+local explodeS
 
 local init = false
 
@@ -80,6 +83,10 @@ function game:load(args)
     lemon = love.graphics.newImage(gameResourceDir .. "lemon/lemon.png")
     lemonW, lemonH = lemon:getDimensions()
     explode = love.graphics.newImage(gameResourceDir .. "explode.png")
+    scoreS = love.audio.newSource(gameResourceDir .. "score.mp3", "static")
+    explodeS = love.audio.newSource(gameResourceDir .. "explode.mp3", "static")
+    scoreS:setVolume(0.5)
+    explodeS:setVolume(0.5)
     text = require("text.main")
 
     init = true
@@ -132,18 +139,20 @@ function game:draw()
     end
     if confirm == false then
         if dead == true then
-            text.print("YOU LOSE", 0, -45, 7.5)
-            text.print("Press Any Button To Retry", 0, 30, 3)
+            text.printb("YOU LOSE", 0, -45, 7.5, 2)
+            text.printb("Press Any Button To Retry", 0, 30, 3, 2)
         else
-            text.print("Press Any Button To Start", 0, 0, 3)
+            text.printb("Press Any Button To Start", 0, 0, 3, 2)
         end
-        text.print("A and D To Play", 0, 100, 2)
+        text.printb("A and D To Play", 0, 100, 2, 2)
     end
 
-    text.print(tostring(score), -350, -250, 3)
+    text.printb(tostring(score), -330, -250, 3, 2)
+    text.printb("HIGH: " .. tostring(highScore), -325, -210, 2, 2)
 end
 
 local function youDied()
+    explodeS:play()
     rot = 0
     confirm = false
     dead = true
@@ -157,7 +166,7 @@ local function spawnShit()
     local current = fall["count"] + 1
     fall["count"] = current
 
-    if love.math.random(0, 100) >= 90 then
+    if love.math.random(0, 100) > 95 then
         fall["type"][current] = 0 -- 0 is bomb 1 is lemon
     else
         fall["type"][current] = 1
@@ -176,11 +185,15 @@ local function maybeCollectIt()
     for i = #fall["when"], 1, -1 do
         local when = fall["when"][i]
 
-        if when <= 0.1 and when >= 0.075 then
+        if when <= 0.1 then
             local where = fall["where"][i]
             local dif = math.abs(where - pX)
-            if dif < bucketW * 1.1 and fall["type"][i] == 1 then
+            if dif < bucketW * 0.9 and fall["type"][i] == 1 and when >= 0.025 then
                 score = score + 1
+                scoreS:play()
+                if score > highScore then
+                    highScore = score
+                end
                 isItTheTimeYet = math.max(isItTheTimeYet - 10, 0)
                 lastPickUp = 0
 
@@ -188,18 +201,25 @@ local function maybeCollectIt()
                 table.remove(fall["when"], i)
                 table.remove(fall["where"], i)
                 fall["count"] = fall["count"] - 1
-                gameTickV = gameTickV + 0.01
-            elseif dif < bucketW * 0.6 and fall["type"][i] == 0 then
+            elseif dif < bucketW * 0.6 and fall["type"][i] == 0 and when >= 0.075 then
                 youDied()
             end
         end
         if when <= -0.05 and fall["type"][i] == 1 then
+            table.remove(fall["type"], i)
+            table.remove(fall["when"], i)
+            table.remove(fall["where"], i)
+            fall["count"] = fall["count"] - 1
             youDied()
         elseif when <= -0.05 and fall["type"][i] == 0 then
             explodeCount = explodeCount + 1
+            local S = explodeS:clone()
+            S:seek(0.1, "seconds")
+            S:play()
             explodeT[explodeCount] = {
                 ["x"] = fall["where"][i],
-                ["time"] = 0.1
+                ["time"] = 0.2,
+                ["s"] = S
             }
             table.remove(fall["type"], i)
             table.remove(fall["when"], i)
@@ -207,6 +227,7 @@ local function maybeCollectIt()
             fall["count"] = fall["count"] - 1
         end
     end
+    gameTickV = math.min(1 + (0.0025 * score), 1.75)
 end
 
 local function gameTick(dt)
@@ -222,6 +243,9 @@ local function gameTick(dt)
     for i, v in ipairs(explodeT) do
         explodeT[i]["time"] = explodeT[i]["time"] - dt
         if explodeT[i]["time"] <= 0 then
+            local S = explodeT[i]["s"]
+            S:stop()
+            S:release()
             table.remove(explodeT, i)
             explodeCount = explodeCount - 1
         end
@@ -276,7 +300,7 @@ function game:update(dt)
         pX = pX + (dt * gameTickV * gameTickV) * 400
     end
     pX = math.min(math.max(pX, -300), 300)
-    rot = ease.circleEaseOut((oldPx - pX) * -0.05, rot, 20, dt)
+    rot = math.max(math.min(ease.circleEaseOut((oldPx - pX) * -0.05, rot, 20, dt), 75), -75)
 
     gameTick(dt)
 
@@ -291,7 +315,7 @@ function game:update(dt)
     if lastPickUp ~= nil then
         lastPickUp = lastPickUp + dt
         local temp = (1 - lastPickUp)
-        pYO = (50 ^ temp) / 3
+        pYO = (50 ^ temp) / 2
     else
         pYO = 0
     end
