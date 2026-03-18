@@ -4,7 +4,7 @@ local init = false
 
 local ease = require("render.ease")
 
-local bgImage
+bgImage = nil
 local mainImage
 local backImage
 local backToMenu = false

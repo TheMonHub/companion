@@ -48,13 +48,17 @@ local gameTickV = 1
 local movingA = false
 local movingD = false
 function game:load(args)
+    back.load()
+    playedLemon = true
     renderFloor = false
     pX = 0
     rot = 0
     score = 0
     whenSpawn = 1
     accumulatedTime = 0
+    dead = false
     gameTickV = 1
+    fadein = 1
     confirm = false
     fall = {
         ["count"] = 0,
@@ -71,28 +75,6 @@ function game:load(args)
     explodeT = {
 
     }
-    -- DRY will hate me
-    if init == true then
-        return
-    end
-    background.load()
-    back.load()
-
-    bucket = love.graphics.newImage(gameResourceDir .. "lemon/bucket.png")
-    bucketW, bucketH = bucket:getDimensions()
-    bomb = love.graphics.newImage(gameResourceDir .. "lemon/bomb.png")
-    bombW, bombH = bomb:getDimensions()
-    lemon = love.graphics.newImage(gameResourceDir .. "lemon/lemon.png")
-    lemonW, lemonH = lemon:getDimensions()
-    explode = love.graphics.newImage(gameResourceDir .. "explode.png")
-    scoreS = love.audio.newSource(gameResourceDir .. "score.mp3", "static")
-    explodeS = love.audio.newSource(gameResourceDir .. "explode.mp3", "static")
-    scoreS:setVolume(0.5)
-    explodeS:setVolume(0.75)
-    text = require("text.main")
-
-    init = true
-
     love.keypressed = function(key, scancode, isrepeat)
         if waiiitttt <= 0 and #key == 1 then
             confirm = true
@@ -111,6 +93,26 @@ function game:load(args)
             movingA = false
         end
     end
+    -- DRY will hate me
+    if init == true then
+        return
+    end
+    background.load()
+
+    bucket = love.graphics.newImage(gameResourceDir .. "lemon/bucket.png")
+    bucketW, bucketH = bucket:getDimensions()
+    bomb = love.graphics.newImage(gameResourceDir .. "lemon/bomb.png")
+    bombW, bombH = bomb:getDimensions()
+    lemon = love.graphics.newImage(gameResourceDir .. "lemon/lemon.png")
+    lemonW, lemonH = lemon:getDimensions()
+    explode = love.graphics.newImage(gameResourceDir .. "explode.png")
+    scoreS = love.audio.newSource(gameResourceDir .. "score.mp3", "static")
+    explodeS = love.audio.newSource(gameResourceDir .. "explode.mp3", "static")
+    scoreS:setVolume(0.5)
+    explodeS:setVolume(0.75)
+    text = require("text.main")
+
+    init = true
 end
 
 function game:draw()
@@ -138,16 +140,25 @@ function game:draw()
     end
     if confirm == false then
         if dead == true then
-            text.printb("YOU LOSE", 0, -45, 7.5, 2)
-            text.printb("Press Any Button To Retry", 0, 30, 3, 2)
+            text.printb("YOU LOSE", 0, -45, 7.5, 6)
+            text.printb("Press Any Button To Retry", 0, 30, 3, 3)
         else
-            text.printb("Press Any Button To Start", 0, 0, 3, 2)
+            text.printb("Press Any Button To Start", 0, 0, 3, 3)
         end
         text.printb("A and D To Play", 0, 100, 2, 2)
     end
 
-    text.printb(tostring(score), -330, -250, 3, 2)
-    text.printb("HIGH: " .. tostring(highScore), -325, -210, 2, 2)
+    if string.find(tostring(score), "67") then
+        text.printb("No, not that number.", -300, -250, 1.5, 2)
+    else
+        text.printb(tostring(score), -330, -250, 3, 2)
+    end
+
+    if string.find(tostring(highScore), "67") then
+        text.printb("HIGH: nope", -325, -210, 2, 2)
+    else
+        text.printb("HIGH: " .. tostring(highScore), -325, -210, 2, 2)
+    end
 
     back.draw()
 
@@ -170,7 +181,7 @@ local function spawnShit()
     local current = fall["count"] + 1
     fall["count"] = current
 
-    if love.math.random(0, 100) > 95 then
+    if love.math.random(1, 100) > 95 then
         fall["type"][current] = 0 -- 0 is bomb 1 is lemon
     else
         fall["type"][current] = 1
@@ -201,7 +212,7 @@ local function maybeCollectIt()
                 if score > highScore then
                     highScore = score
                 end
-                isItTheTimeYet = math.max(isItTheTimeYet - 1, 0)
+                isItTheTimeYet = math.max(isItTheTimeYet - 3, 0)
                 lastPickUp = 0
 
                 table.remove(fall["type"], i)
@@ -225,7 +236,7 @@ local function maybeCollectIt()
             S:play()
             explodeT[explodeCount] = {
                 ["x"] = fall["where"][i],
-                ["time"] = 0.15,
+                ["time"] = 0.1,
                 ["s"] = S
             }
             table.remove(fall["type"], i)
@@ -275,8 +286,24 @@ function game:update(dt)
         if fadein <= 0.05 then
             fadein = 0
         else
-            fadein = ease.circleEaseOut(0, fadein, 3, dt)
+            fadein = ease.circleEaseOut(0, fadein, 5, dt)
         end
+    end
+
+    if lastPickUp ~= nil then
+        lastPickUp = lastPickUp + dt
+    end
+
+    if lastPickUp ~= nil and lastPickUp > 1 then
+        lastPickUp = nil
+    end
+
+    if lastPickUp ~= nil then
+        lastPickUp = lastPickUp + dt
+        local temp = (1 - lastPickUp)
+        pYO = (50 ^ temp) / 2
+    else
+        pYO = 0
     end
 
     if confirm == false then
@@ -305,31 +332,15 @@ function game:update(dt)
     end
 
     oldPx = pX
-    if movingA == true then
-        pX = pX - (dt * gameTickV * gameTickV) * 400
-    elseif movingD == true then
+    if movingD == true then
         pX = pX + (dt * gameTickV * gameTickV) * 400
+    elseif movingA == true then
+        pX = pX - (dt * gameTickV * gameTickV) * 400
     end
     pX = math.min(math.max(pX, -300), 300)
     rot = math.max(math.min(ease.circleEaseOut((oldPx - pX) * -0.05, rot, 20, dt), 75), -75)
 
     gameTick(dt)
-
-    if lastPickUp ~= nil then
-        lastPickUp = lastPickUp + dt
-    end
-
-    if lastPickUp ~= nil and lastPickUp > 1 then
-        lastPickUp = nil
-    end
-
-    if lastPickUp ~= nil then
-        lastPickUp = lastPickUp + dt
-        local temp = (1 - lastPickUp)
-        pYO = (50 ^ temp) / 2
-    else
-        pYO = 0
-    end
 end
 
 return game

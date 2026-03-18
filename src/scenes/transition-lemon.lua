@@ -11,6 +11,9 @@ local init = false
 local fadeOut = 0
 local debounce = false
 
+local metalpipeS
+local playOnce = false
+
 function game:load(args)
     frame = 0
     haruOffsetX = 0
@@ -20,10 +23,15 @@ function game:load(args)
     bucketY = -300
     fadeOut = 0
     debounce = false
+    playOnce = false
 
     if init == true then
         return
     end
+    metalpipeS = love.audio.newSource(gameResourceDir .. "metalpipe.mp3", "static")
+    metalpipeS:setVolume(0.5)
+    haru.load()
+    background.load()
     bucketThingy = love.graphics.newImage(gameResourceDir .. "haru/lemon-b.png")
     init = true
 end
@@ -46,6 +54,7 @@ function game:update(dt)
     haru.update(dt)
     frame = frame + dt
     if fadeOut >= 0.95 then
+        metalpipeS:stop()
         self.setScene("lemon")
     end
     if frame > 0.7 then
@@ -58,12 +67,17 @@ function game:update(dt)
         bucketX = ease.circleEaseOut(100, bucketX, 4, dt)
         if frame > 0.8 then
             fadeOut = ease.circleEaseOut(1, fadeOut, 5, dt)
+            metalpipeS:setVolume((1 - fadeOut) * 0.5)
         end
     elseif frame > 0.5 then
+        if playOnce == false then
+            metalpipeS:setVolume(0.5)
+            metalpipeS:play()
+            playOnce = true
+        end
         haru.setBodyStage("lemon-1")
-        haru.setFaceStage("up")
         if frame < 0.55 then
-            haruOffsetX = love.math.random(-15, 15)
+            haruOffsetX = love.math.random(-30, 30)
         end
     elseif frame < 0.5 and frame > 0.45 then
         bucketY = ease.circleEaseOut(0, bucketY, 50, dt)
