@@ -12,9 +12,6 @@ if gameLog == nil then
     return
 end
 gameLog.info("Initializing...")
-function love.quit()
-    gameLog.info("Exiting...")
-end
 
 if (love.filesystem.isFused() == false) then -- Unsupported
     gameLog.error("Game must be in fused mode!")
