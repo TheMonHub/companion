@@ -92,7 +92,7 @@ function game:update(dt)
                 menuOrigin = 2
                 menuTranProgess = 1
                 hover = 1
-                self.setScene("lemon")
+                self.setScene("menu")
             end
             menuTranFrame = menuTranFrame + dt * 3
             menuTranProgess = ease.easeInBack(math.min(menuTranFrame, 1), 1, 1)
@@ -105,6 +105,7 @@ function game:update(dt)
                 return
             else
                 menuTranProgess = ease.circleEaseOut(0, menuTranProgess, 10, dt)
+                menuTranFrame = 0
             end
         end
     end
