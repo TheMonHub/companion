@@ -116,14 +116,7 @@ function love.draw()
 end
 
 canQuit = false
-cleanupHandler = function()
-
-end
-quitHandler = function()
-    return canQuit
-end
 
 function love.quit()
-    cleanupHandler()
-    return quitHandler()
+    return canQuit
 end

@@ -18,6 +18,16 @@ function module.print(content, positionX, positionY, scale) -- How tf did I mess
     )
 end
 
+function module.printn(content, positionX, positionY, scale) -- How tf did I mess that up
+    love.graphics.print(
+            content,
+            positionX,
+            positionY - (defaultFont:getHeight() * (scale or 1)) / 2,
+            0,
+            (scale or 1)
+    )
+end
+
 function module.printb(content, positionX, positionY, scale, borderScale)
     love.graphics.setColor(0,0,0,1)
     module.print(content, positionX - borderScale, positionY - borderScale, scale)

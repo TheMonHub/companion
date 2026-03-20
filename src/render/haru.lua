@@ -6,6 +6,7 @@ local init = false
 
 local tail
 local limbs
+local reach
 local torso
 local legs
 local head
@@ -18,6 +19,7 @@ local faceBlink
 
 local mouthSadOpen
 local mouthSadClose
+local faceNow
 
 local lemon = {}
 
@@ -46,6 +48,7 @@ local up = false
 haruOffsetX = 0
 
 haruSpeed = 1
+shadowTran = 1
 
 function module.getFaceStage()
     return faceStage
@@ -97,6 +100,7 @@ function module.load(args)
     end
     tail = love.graphics.newImage(gameResourceDir .. "haru/tail.png")
     limbs = love.graphics.newImage(gameResourceDir .. "haru/limbs.png")
+    reach = love.graphics.newImage(gameResourceDir .. "haru/limbs-2.png")
     torso = love.graphics.newImage(gameResourceDir .. "haru/torso.png")
     legs = love.graphics.newImage(gameResourceDir .. "haru/legs.png")
     head = love.graphics.newImage(gameResourceDir .. "haru/head.png")
@@ -108,6 +112,7 @@ function module.load(args)
     shadow = love.graphics.newImage(gameResourceDir .. "haru/shadow.png")
     mouthSadClose = love.graphics.newImage(gameResourceDir .. "haru/face-mouth-sad.png")
     mouthSadOpen = love.graphics.newImage(gameResourceDir .. "haru/face-mouth-sad-open.png")
+    faceNow = love.graphics.newImage(gameResourceDir .. "haru/face-4.png")
 
     lemon[1] = love.graphics.newImage(gameResourceDir .. "haru/lemon-1.png")
     lemon[2] = love.graphics.newImage(gameResourceDir .. "haru/lemon-2.png")
@@ -125,9 +130,15 @@ function module.draw()
     end
 
     local y = amplitude * math.sin(frequency * time)
+    love.graphics.setColor(1,1,1,shadowTran)
     love.graphics.draw(shadow, -400, -300)
+    love.graphics.setColor(1,1,1,1)
     love.graphics.draw(tail, (-y * 15 - 400 + mouseX * 0.005) + mouseY * 0.05, y * 25 - 300 - mouseY * 0.05, -y * 0.05 + mouseY * 0.0001)
-    love.graphics.draw(limbs, -400, y * 1.5 - 300)
+    if bodyStage == "reach" then
+        love.graphics.draw(reach, -400, y * 1.5 - 300)
+    else
+        love.graphics.draw(limbs, -400, y * 1.5 - 300)
+    end
     love.graphics.draw(torso, -400 - mouseX * 0.0025, y - 300 - mouseY * 0.0025)
     love.graphics.draw(legs, -400 , -300)
     love.graphics.draw(head, -400 - mouseX * 0.001, y - 300 - mouseY * 0.001)
@@ -146,6 +157,8 @@ function module.draw()
         love.graphics.draw(face, -400 + mouseX * 0.001, y * 2 - 295 + mouseY * 0.001)
     elseif faceStage == "blink" then
         love.graphics.draw(faceBlink, -400 + mouseX * 0.01, y * 2 - 295 + mouseY * 0.01)
+    elseif faceStage == "now" then
+        love.graphics.draw(faceNow, -400 + mouseX * 0.01, y * 2 - 295 + mouseY * 0.01)
     end
 end
 
@@ -157,23 +170,25 @@ function module.update(dt)
     if up == true then
         newMouseX, newMouseY = 400, -300
     end
-    if isBlink == true then
-        blinkPause = blinkPause + dt
-        if blinkPause >= 0.1 then
-            isBlink = false
-            blinkTime = love.math.random(3, 7.5)
-            blinkPause = 0
-        end
-    else
-        if blinkTime <= 0 then
-            isBlink = true
-            beforeBlinkStage = faceStage
-            blinkPause = 0
-            faceStage = "blink"
+    if faceStage ~= "now" then
+        if isBlink == true then
+            blinkPause = blinkPause + dt
+            if blinkPause >= 0.1 then
+                isBlink = false
+                blinkTime = love.math.random(3, 7.5)
+                blinkPause = 0
+            end
         else
-            isBlink = false
-            faceStage = beforeBlinkStage
-            blinkTime = blinkTime - dt
+            if blinkTime <= 0 then
+                isBlink = true
+                beforeBlinkStage = faceStage
+                blinkPause = 0
+                faceStage = "blink"
+            else
+                isBlink = false
+                faceStage = beforeBlinkStage
+                blinkTime = blinkTime - dt
+            end
         end
     end
     time = time + dt * haruSpeed

@@ -27,7 +27,7 @@ local bgFade = 1
 
 local waitUnclick = false
 
-local debug_itstime = false
+local debug_itstime = true
 local infinite_mode = false
 
 local mood = {}
@@ -124,10 +124,19 @@ function game:update(dt)
                         fadeout = 1
                         if menuTo == "itstime" then
                             if bgFade <= 0.001 then
+                                shadowTran = 0
+                                bgFade = 0
                                 self.setScene("itstime")
                             end
+                            if bgFade <= 0.3 then
+                                haru.setFaceStage("blink")
+                            end
+                            if bgFade <= 0.25 then
+                                haru.setFaceStage("now")
+                            end
                             bgFade = ease.circleEaseOut(0, bgFade, 2, dt)
-                            haruSpeed = math.max(bgFade, 0.25)
+                            haruSpeed = math.max(bgFade, 0.5)
+                            shadowTran = ease.circleEaseOut(0, shadowTran, 5, dt)
                             haru.setLookAtYOU(true)
                             haru.setMouthStage("neutral")
                             return

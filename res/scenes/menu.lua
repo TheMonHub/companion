@@ -26,11 +26,13 @@ function game:load(args)
     fadein = 1
     fadeout = 0
     back.load()
-    to = nil
 
     renderFloor = false
 
     love.keypressed = function(key, scancode, isrepeat)
+        if menuTo ~= nil then
+            return
+        end
         if scancode == "space" then
             menuTo = minigames[current]["scene"]
             local temp = somethingSound:clone()
