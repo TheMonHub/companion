@@ -16,10 +16,13 @@ local change
 
 local unclickWait = false
 
+local sDebounce = false
+
 function module.load(args)
     backToMenu = false
     fadeOut = 0
     change = false
+    sDebounce = false
     if love.mouse.isDown(1) == true then
         unclickWait = true
     end
@@ -63,6 +66,12 @@ function module.update(dt)
         hover = ease.circleEaseOut(0, hover, 20, dt)
         if love.mouse.isDown(1) == true and unclickWait == false then
             backToMenu = true
+            if sDebounce == false then
+                local temp = somethingSound:clone()
+                temp:play()
+                temp:release()
+                sDebounce = true
+            end
         elseif love.mouse.isDown(1) == false then
             unclickWait = false
         end

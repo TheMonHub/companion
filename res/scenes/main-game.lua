@@ -27,6 +27,9 @@ local bgFade = 1
 
 local waitUnclick = false
 
+local debug_itstime = false
+local infinite_mode = false
+
 local mood = {}
 
 function game:load(args)
@@ -120,6 +123,9 @@ function game:update(dt)
                     if fadeout >= 0.95 then
                         fadeout = 1
                         if menuTo == "itstime" then
+                            if bgFade <= 0.001 then
+                                self.setScene("itstime")
+                            end
                             bgFade = ease.circleEaseOut(0, bgFade, 2, dt)
                             haruSpeed = math.max(bgFade, 0.25)
                             haru.setLookAtYOU(true)
@@ -153,6 +159,9 @@ function game:update(dt)
             menuTranProgess = 0
             menuTranFrame = 0
             menuOrigin = 1
+            local temp = somethingSound:clone()
+            temp:play()
+            temp:release()
         else
             waitUnclick = false
         end
@@ -161,7 +170,9 @@ function game:update(dt)
     end
 
     if isItTheTimeYet <= 0
-            and playedLemon == true then
+            and playedLemon == true
+            or debug_itstime == true
+            and infinite_mode == false then
         menuTo = "itstime"
     end
 end
