@@ -3,3 +3,6 @@ I shoulda use atlas or sprite sheet
 
 I'm just ehhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh-
 TOO LAZY.
+
+
+Wait whut my lame code is in the resources folder?

@@ -1,17 +1,17 @@
 ﻿gameSourceDirMntPoint = "gameSourceDir"
 gameResourceDir = gameSourceDirMntPoint .. "/res/"
 
-windowWidth, windowHeight = 800, 600
-windowCenterX, windowCenterY = windowWidth / 2, windowHeight / 2
-screenSizeX, screenSizeY = love.window.getDesktopDimensions()
-
-Username = os.getenv("USERNAME")
-
 local gameLog = require("log.main")
 if gameLog == nil then
     return
 end
 gameLog.info("Initializing...")
+
+windowWidth, windowHeight = 800, 600
+windowCenterX, windowCenterY = windowWidth / 2, windowHeight / 2
+screenSizeX, screenSizeY = love.window.getDesktopDimensions()
+
+Username = os.getenv("USERNAME")
 
 if (love.filesystem.isFused() == false) then -- Unsupported
     gameLog.error("Game must be in fused mode!")
@@ -46,7 +46,7 @@ end
 -- INIT END
 
 local sceneryInit = require("extern.scenery")
-local scenery = sceneryInit("intro", "scenes")
+local scenery = sceneryInit("intro", gameResourceDir .. "scenes")
 local render = require("render.main")
 
 -- MODULE INIT END
@@ -60,13 +60,14 @@ function love.load()
     gameLog.info("Game Root: " .. love.filesystem.getRealDirectory(gameSourceDirMntPoint))
     gameLog.info("Game Resources: " .. love.filesystem.getRealDirectory(gameResourceDir) .. "\\res")
     gameLog.info("Username: " .. Username)
-    love.graphics.setBackgroundColor(1,1,1,1)
+    love.graphics.setBackgroundColor(0,0,0,1)
     local winSuccess = love.window.setMode( windowWidth, windowHeight, {borderless=false, resizable=false, x=screenSizeX / 2 - windowCenterX, y=screenSizeY / 2 - windowCenterY} )
     if winSuccess == false then
-        gameLog.error("Failed to open the window!")
+        gameLog.error("Failed to open the window! (1)")
         love.event.quit(4)
         return
     end
+
     iconMain = love.image.newImageData(gameResourceDir .. "icon.png")
     iconBlack = love.image.newImageData(gameResourceDir .. "icon-black.png")
     love.window.setIcon(iconMain)
@@ -76,24 +77,37 @@ function love.load()
     render.winX = screenSizeX / 2 - windowCenterX
     render.winY = screenSizeY / 2 - windowCenterY
 
+    love.keyboard.setKeyRepeat(true)
+
     render.update()
     scenery:load()
 end
 
+local totalTime = 0
 function love.update(dt)
+    totalTime = totalTime + dt * 2
+    glitchShader:send("time", totalTime)
     render.update(dt)
     scenery:update(dt)
 end
 
+defaultRender = true
 function love.draw()
+    if defaultRender == false then
+        scenery:draw()
+        return
+    end
+
     love.graphics.translate(windowCenterX, windowCenterY)
 
+    love.graphics.setShader(ditherShader)
     love.graphics.setCanvas(mainRender)
     love.graphics.setBlendMode("alpha")
-    love.graphics.clear(0,0,0,0)
+    love.graphics.clear(0,0,0,1)
     scenery:draw()
     love.graphics.setCanvas()
 
+    love.graphics.setShader()
     love.graphics.origin()
     love.graphics.scale(1 / love.graphics.getDPIScale(), 1 / love.graphics.getDPIScale())
     love.graphics.setBlendMode("alpha", "premultiplied")

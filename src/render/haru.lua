@@ -45,6 +45,8 @@ local up = false
 
 haruOffsetX = 0
 
+haruSpeed = 1
+
 function module.getFaceStage()
     return faceStage
 end
@@ -122,7 +124,7 @@ function module.draw()
         return
     end
 
-    local y = amplitude * math.sin(frequency * time)
+    local y = amplitude * math.sin(frequency * time * haruSpeed)
     love.graphics.draw(shadow, -400, -300)
     love.graphics.draw(tail, (-y * 15 - 400 + mouseX * 0.005) + mouseY * 0.05, y * 25 - 300 - mouseY * 0.05, -y * 0.05 + mouseY * 0.0001)
     love.graphics.draw(limbs, -400, y * 1.5 - 300)
@@ -148,10 +150,10 @@ function module.draw()
 end
 
 function module.update(dt)
-    local newMouseX, newMouseY = 400, 300
-    if look == false then
-        newMouseX, newMouseY = love.mouse.getPosition()
-    end
+    local newMouseX, newMouseY = love.mouse.getPosition()
+    newMouseX = newMouseX * love.graphics.getDPIScale()
+    newMouseY = newMouseY * love.graphics.getDPIScale()
+
     if up == true then
         newMouseX, newMouseY = 400, -300
     end
@@ -174,9 +176,15 @@ function module.update(dt)
             blinkTime = blinkTime - dt
         end
     end
+    time = time + dt
+    if look then
+        mouseX = ease.circleEaseOut(0, mouseX, 1, dt)
+        mouseY = ease.circleEaseOut(0, mouseY, 1, dt)
+        return
+    end
     mouseX = ease.circleEaseOut(newMouseX - 400, mouseX, 7.5, dt)
     mouseY = ease.circleEaseOut(newMouseY - 300, mouseY, 7.5, dt)
-    time = time + dt
+
 end
 
 return module

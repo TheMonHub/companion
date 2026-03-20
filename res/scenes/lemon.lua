@@ -212,7 +212,7 @@ local function maybeCollectIt()
                 if score > highScore then
                     highScore = score
                 end
-                isItTheTimeYet = math.max(isItTheTimeYet - 3, 0)
+                isItTheTimeYet = math.max(isItTheTimeYet - 7.5, 0)
                 lastPickUp = 0
 
                 table.remove(fall["type"], i)

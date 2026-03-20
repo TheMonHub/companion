@@ -5,6 +5,7 @@ local haru = require("render.haru")
 local background = require("render.background")
 
 local fadein = 1
+local fadeout = 0
 
 local moodRn = 4
 moodValue = 300
@@ -17,9 +18,14 @@ local hover = 0
 local bgImage
 
 playedLemon = false
-local menuOrigin = 0 --  0 = none, 1 = to, 2 = from
+
+local menuOrigin = 0 --0 = none, 1 = to, 2 = from
 local menuTranFrame = 0
 local menuTranProgess = 0
+
+local bgFade = 1
+
+local waitUnclick = false
 
 local mood = {}
 
@@ -27,7 +33,7 @@ function game:load(args)
     haru.setBodyStage("neutral")
     haru.lookUp(false)
     renderFloor = true
-    fadeOut = 1
+    fadeout = 0
     fadein = 1
     changeTo = nil
 
@@ -52,13 +58,14 @@ function game:load(args)
 end
 
 function game:draw()
-    love.graphics.setColor(1,1,1,1)
+    love.graphics.setColor(1,1,1,bgFade)
     background.draw()
+    love.graphics.setColor(1,1,1,1)
     haru.draw()
 
-    love.graphics.setColor(1,1,1,1)
+    love.graphics.setColor(1,1,1,1 - fadeout)
     love.graphics.draw(bgImage, -400 + (675 * (1- menuTranProgess)) - (1-hover) * 15, -315 - (1085 * (1- menuTranProgess)) + (1-hover) * 15)
-    love.graphics.setColor(1,1,1,1 - menuTranProgess)
+    love.graphics.setColor(1,1,1,1 - menuTranProgess - fadeout)
     love.graphics.draw(mood[moodRn], -365 - (1-hover) * 5 - (150 * menuTranProgess), -335 + (150 * menuTranProgess) + (1-hover) * 5)
 
     love.graphics.setColor(1,1,1,fadein)
@@ -102,24 +109,60 @@ function game:update(dt)
         if menuOrigin == 2 then
             if menuTranProgess > 0.05 then
                 menuTranProgess = ease.circleEaseOut(0, menuTranProgess, 10, dt)
+                if love.mouse.isDown(1) == true then
+                    waitUnclick = true
+                end
                 return
             else
                 menuTranProgess = ease.circleEaseOut(0, menuTranProgess, 10, dt)
                 menuTranFrame = 0
+                if menuTo ~= nil then
+                    if fadeout >= 0.95 then
+                        fadeout = 1
+                        if menuTo == "itstime" then
+                            bgFade = ease.circleEaseOut(0, bgFade, 2, dt)
+                            haruSpeed = math.max(bgFade, 0.25)
+                            haru.setLookAtYOU(true)
+                            haru.setMouthStage("neutral")
+                            return
+                        end
+                        local temp = menuTo
+                        menuTo = nil
+                        menuOrigin = 2
+                        menuTranProgess = 1
+                        hover = 1
+                        self.setScene(temp)
+                    else
+                        fadeout = ease.circleEaseOut(1, fadeout, 10, dt)
+                    end
+                    return
+                end
             end
         end
     end
 
     local mousePosX, mousePosY = love.mouse.getPosition()
+    mousePosX = mousePosX * love.graphics.getDPIScale()
+    mousePosY = mousePosY * love.graphics.getDPIScale()
     if mousePosX >= 675 and mousePosY <= 125 and changeTo == nil then
         hover = ease.circleEaseOut(0, hover, 20, dt)
         if love.mouse.isDown(1) == true then
+            if waitUnclick == true then
+                return
+            end
             menuTranProgess = 0
             menuTranFrame = 0
             menuOrigin = 1
+        else
+            waitUnclick = false
         end
     else
         hover = ease.circleEaseOut(1, hover, 10, dt)
+    end
+
+    if isItTheTimeYet <= 0
+            and playedLemon == true then
+        menuTo = "itstime"
     end
 end
 

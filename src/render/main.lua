@@ -24,9 +24,8 @@ function module.update()
 end
 
 function module.shakeWin(intensityX, intensityY)
-    local newIntX, newIntY = intensityX * love.window.getDPIScale(), intensityY * love.window.getDPIScale()
-    shakeX = love.math.random(-newIntX, newIntX)
-    shakeY = love.math.random(-newIntY, newIntY)
+    shakeX = love.math.random(-intensityX, intensityX)
+    shakeY = love.math.random(-intensityY, intensityY)
 end
 
 return module
