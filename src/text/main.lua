@@ -28,6 +28,10 @@ function module.printn(content, positionX, positionY, scale) -- How tf did I mes
     )
 end
 
+function module.getLength(content, scale)
+    return defaultFont:getWidth(content) * scale
+end
+
 function module.printb(content, positionX, positionY, scale, borderScale)
     love.graphics.setColor(0,0,0,1)
     module.print(content, positionX - borderScale, positionY - borderScale, scale)

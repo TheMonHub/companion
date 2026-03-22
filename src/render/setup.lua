@@ -1,6 +1,7 @@
-local ffi = require("ffi")
+function doIt()
+    local ffi = require("ffi")
 
-ffi.cdef[[
+    ffi.cdef[[
 typedef void* HWND;
 typedef long LONG_PTR;
 
@@ -10,18 +11,19 @@ LONG_PTR SetWindowLongPtrA(HWND hWnd, int nIndex, LONG_PTR dwNewLong);
 int SetLayeredWindowAttributes(HWND hwnd, unsigned int crKey, unsigned char bAlpha, unsigned int dwFlags);
 ]]
 
-local user32 = ffi.load("user32")
+    local user32 = ffi.load("user32")
 
-local hwnd = user32.GetActiveWindow()
+    local hwnd = user32.GetActiveWindow()
 
-local GWL_EXSTYLE = -20
-local WS_EX_LAYERED = 0x00080000
-local LWA_COLORKEY = 0x1
+    local GWL_EXSTYLE = -20
+    local WS_EX_LAYERED = 0x00080000
+    local LWA_COLORKEY = 0x1
 
-local style = user32.GetWindowLongPtrA(hwnd, GWL_EXSTYLE)
-user32.SetWindowLongPtrA(hwnd, GWL_EXSTYLE, bit.bor(style, WS_EX_LAYERED))
+    local style = user32.GetWindowLongPtrA(hwnd, GWL_EXSTYLE)
+    user32.SetWindowLongPtrA(hwnd, GWL_EXSTYLE, bit.bor(style, WS_EX_LAYERED))
 
-user32.SetLayeredWindowAttributes(hwnd, 0x00FF00FF, 0, LWA_COLORKEY)
+    user32.SetLayeredWindowAttributes(hwnd, 0x00FF00FF, 0, LWA_COLORKEY)
+end
 
 ditherShader = love.graphics.newShader([[
     const float bayer[16] = float[](
@@ -205,4 +207,4 @@ glitchShader:send("prob", 0.5)
 glitchShader:send("intensityChromatic", 0.05)
 love.graphics.setShader(ditherShader)
 
-return
+return doIt

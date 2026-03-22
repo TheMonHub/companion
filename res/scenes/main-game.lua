@@ -3,6 +3,7 @@ local game = {}
 local ease = require("render.ease")
 local haru = require("render.haru")
 local background = require("render.background")
+local window = require("render.main")
 
 local fadein = 1
 local fadeout = 0
@@ -61,8 +62,15 @@ function game:load(args)
 end
 
 function game:draw()
+    if menuTo == "itstime" and menuOrigin == 2 then
+        if love.math.random(0, 10) * 0.1 >= bgFade + 0.9 then
+            love.graphics.setColor(1,0,1,1)
+            love.graphics.rectangle("fill", -400, -300, 800, 600)
+        end
+    end
     love.graphics.setColor(1,1,1,bgFade)
     background.draw()
+
     love.graphics.setColor(1,1,1,1)
     haru.draw()
 
@@ -75,6 +83,7 @@ function game:draw()
     love.graphics.rectangle("fill", -400, -300, 800, 600)
 end
 
+local str = "."
 function game:update(dt)
     if fadein ~= 0 then
         if fadein <= 0.05 then
@@ -123,7 +132,19 @@ function game:update(dt)
                     if fadeout >= 0.95 then
                         fadeout = 1
                         if menuTo == "itstime" then
-                            if bgFade <= 0.001 then
+                            window.enabled = true
+                            window.winX = screenSizeX / 2 - windowCenterX
+                            window.winY = screenSizeY / 2 - windowCenterY
+                            if love.math.random(0, 10) * 0.1 >= bgFade - 0.125 then
+                                love.window.setTitle("COMPANION?")
+                                love.window.setIcon(iconMain)
+                            else
+                                love.window.setTitle(str)
+                                love.window.setIcon(iconBlack)
+                            end
+                            str = str .. "."
+
+                            if bgFade <= 0.01 then
                                 shadowTran = 0
                                 bgFade = 0
                                 self.setScene("itstime")

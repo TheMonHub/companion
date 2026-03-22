@@ -10,6 +10,7 @@ gameLog.info("Initializing...")
 windowWidth, windowHeight = 800, 600
 windowCenterX, windowCenterY = windowWidth / 2, windowHeight / 2
 screenSizeX, screenSizeY = love.window.getDesktopDimensions()
+screenHalfX, screenHalfY = screenSizeX * 0.5, screenSizeY * 0.5
 
 Username = os.getenv("USERNAME")
 
@@ -55,12 +56,13 @@ iconMain = nil
 iconBlack = nil
 
 local mainRender
+local fullRender
 function love.load()
     gameLog.info("Initialized!")
     gameLog.info("Game Root: " .. love.filesystem.getRealDirectory(gameSourceDirMntPoint))
     gameLog.info("Game Resources: " .. love.filesystem.getRealDirectory(gameResourceDir) .. "\\res")
     gameLog.info("Username: " .. Username)
-    love.graphics.setBackgroundColor(0,0,0,1)
+    love.graphics.setBackgroundColor(1,1,1,1)
     local winSuccess = love.window.setMode( windowWidth, windowHeight, {borderless=false, resizable=false, x=screenSizeX / 2 - windowCenterX, y=screenSizeY / 2 - windowCenterY} )
     if winSuccess == false then
         gameLog.error("Failed to open the window! (1)")
@@ -73,13 +75,15 @@ function love.load()
     love.window.setIcon(iconMain)
     love.window.setTitle("COMPANION")
     mainRender = love.graphics.newCanvas(800, 600)
-    require("render.setup")
+    fullRender = love.graphics.newCanvas(screenSizeX, screenSizeY)
+    doSetup = require("render.setup")
+    doSetup()
     render.winX = screenSizeX / 2 - windowCenterX
     render.winY = screenSizeY / 2 - windowCenterY
 
     love.keyboard.setKeyRepeat(true)
 
-    render.update()
+    render.update(0)
     scenery:load()
 end
 
@@ -87,21 +91,47 @@ local totalTime = 0
 function love.update(dt)
     totalTime = totalTime + dt * 2
     glitchShader:send("time", totalTime)
-    render.update(dt)
+    if render.enabled == true then
+        render.update(dt)
+    end
     scenery:update(dt)
+
 end
 
-defaultRender = true
+local forthWall = false
+local RenderIt = true
+
+function breakEmForthWall()
+    forthWall = true
+    local winSuccess = love.window.setMode( screenSizeX - 1, screenSizeY - 1, {borderless=true, resizable=false, x=0, y=0} )
+    if winSuccess == false then
+        gameLog.error("Failed to open the window! (2)")
+        love.event.quit(4)
+        return
+    end
+    render.enabled = false
+    doSetup()
+    require("render.ontop")
+    RenderIt = true
+end
+
 function love.draw()
-    if defaultRender == false then
-        scenery:draw()
+    if RenderIt == false then
         return
     end
 
-    love.graphics.translate(windowCenterX, windowCenterY)
+    if forthWall == true then
+        love.graphics.translate(screenSizeX / 2, screenSizeY / 2)
+    else
+        love.graphics.translate(windowCenterX, windowCenterY)
+    end
 
     love.graphics.setShader(ditherShader)
-    love.graphics.setCanvas(mainRender)
+    if forthWall == true then
+        love.graphics.setCanvas(fullRender)
+    else
+        love.graphics.setCanvas(mainRender)
+    end
     love.graphics.setBlendMode("alpha")
     love.graphics.clear(0,0,0,1)
     scenery:draw()
@@ -109,10 +139,17 @@ function love.draw()
 
     love.graphics.setShader()
     love.graphics.origin()
-    love.graphics.scale(1 / love.graphics.getDPIScale(), 1 / love.graphics.getDPIScale())
+    if forthWall == false then
+        love.graphics.scale(1 / love.graphics.getDPIScale(), 1 / love.graphics.getDPIScale())
+    end
+    love.graphics.clear(1,0,1,1)
     love.graphics.setBlendMode("alpha", "premultiplied")
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(mainRender, 0,0)
+    if forthWall == true then
+        love.graphics.draw(fullRender, 0,0)
+    else
+        love.graphics.draw(mainRender, 0,0)
+    end
 end
 
 canQuit = false
